@@ -9,9 +9,9 @@
 <body>
     <h1>Simulador de Planificador por Envejecimiento</h1>
     <div id="controls">
-        <input type="text" id="queueNames" placeholder="Nombres de colas separados por comas" style="width: 300px;">
+        
         <button onclick="startScheduler(1)">Iniciar Modo Automático</button>
-        <button onclick="startScheduler(2)">Configurar Modo Manual</button>
+       
     </div>
     <div id="prunDisplay">
         <h2>Estado Actual del PRUN</h2>
@@ -24,7 +24,27 @@
         <!-- Las colas se generarán dinámicamente aquí -->
     </div>
 
-    <button id="pauseButton" onclick="togglePause()">Pausar</button>
+    <div id="manualSetup">
+    <h3>Configuración Manual del Planificador</h3>
+    <form id="setupForm">
+        <label for="numColas">Número de Colas:</label>
+        <input type="number" id="numColas" name="numColas" min="1" max="8" required>
+        <button type="button" onclick="generateProcessInputs()">Generar Campos de Procesos y Nombres</button><br>
+
+        <div id="queueNameInputs"></div> <!-- Contenedor para los nombres de las colas -->
+        <div id="processInputs"></div> <!-- Contenedor para los inputs de los procesos -->
+
+        <label for="quantums">Quantums Iniciales:</label>
+        <input type="number" id="quantums" name="quantums" min="1" required><br>
+
+        <button type="button" onclick="manualSetup()">Configurar Planificador</button>
+    </form>
+</div>
+
+    
+    
+
+<button id="pauseButton" onclick="startManualScheduler()">Iniciar Planificador</button>
 
     <script src="script.js"></script>
 </body>

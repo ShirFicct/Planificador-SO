@@ -77,3 +77,48 @@ button:hover {
     font-size: 16px;
     margin-bottom: 10px;
 }
+
+#manualSetup {
+    background-color: #f8f8f8;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+#manualSetup h3 {
+    color: #333;
+}
+
+#manualSetup form {
+    display: flex;
+    flex-direction: column;
+}
+
+#manualSetup label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#manualSetup input[type='number'] {
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;  /* Establecer un ancho fijo para todos los campos numéricos */
+}
+
+#manualSetup button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 210px;  /* Alinea el ancho del botón con los campos de entrada */
+    align-self: flex-start;  /* Alinea el botón a la izquierda */
+}
+
+#manualSetup button:hover {
+    background-color: #45a049;
+}

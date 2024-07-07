@@ -2,29 +2,95 @@ function startScheduler(mode) {
     document.getElementById('queues').innerHTML = '';
     document.getElementById('currentProcess').textContent = 'Ningún proceso en ejecución';
 
-    let numQueues = mode === 1 ? 3 : parseInt(prompt("Ingrese el número de colas (hasta 8):"), 10);
-    let numProcesses = mode === 1 ? 2 : parseInt(prompt("Ingrese el número de procesos por cola (hasta 8):"), 10);
-    let queueNames = mode === 1 ? ['V', 'M', 'J'] : prompt("Ingrese nombres de colas separados por comas").split(',');
+    if (mode === 1) {  // Modo automático
+        const queueNames = ['V', 'M', 'J']; // Nombres predefinidos para las colas
+        const numColas = 3;
+        const processCounts = [2, 2, 2]; // Asumiendo 2 procesos por cola para simplificar
+        const quantums = 2;  // Quantums iniciales fijos para todos los procesos
+        initQueues(numColas, processCounts, quantums, queueNames);
+    } 
+    
 
-    if (numQueues > 0 && numProcesses > 0 && queueNames.length === numQueues) {
-        initQueues(queueNames, numProcesses, mode);
-        renderQueues();
-        runScheduler();
-    } else {
-        alert("Número de colas, procesos o nombres no válido");
+    renderQueues();
+    runScheduler();
+}
+
+
+
+function generateProcessInputs() {
+    const numColas = parseInt(document.getElementById('numColas').value);
+    const queueContainer = document.getElementById('queueNameInputs');
+    const processContainer = document.getElementById('processInputs');
+    queueContainer.innerHTML = '';  // Limpiar cualquier entrada previa
+    processContainer.innerHTML = '';
+
+    for (let i = 0; i < numColas; i++) {
+        // Crear entrada para el nombre de la cola
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.id = `queueName${i + 1}`;
+        nameInput.name = `queueName${i + 1}`;
+        nameInput.required = true;
+        nameInput.placeholder = `Nombre de Cola ${i + 1}`;
+        queueContainer.appendChild(nameInput);
+        queueContainer.appendChild(document.createElement('br'));
+
+        // Crear entrada para el número de procesos
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.id = `cola${i + 1}`;
+        input.name = `cola${i + 1}`;
+        input.min = '1';
+        input.max = '8';
+        input.required = true;
+        input.placeholder = `Procesos en Cola ${i + 1}`;
+        processContainer.appendChild(input);
+        processContainer.appendChild(document.createElement('br'));
     }
 }
 
-function initQueues(queueNames, numProcesses, mode) {
-    let initialQuantum = mode === 2 ? parseInt(prompt("Ingrese los quantum iniciales para todos los procesos:"), 10) : 2;
-    queues = queueNames.map((name) => {
-        return Array.from({length: numProcesses}, (_, j) => ({
-            id: `${name}${j + 1}`,
-            lives: 3,
-            quantum: initialQuantum
-        }));
-    });
+
+function manualSetup() {
+    const numColas = parseInt(document.getElementById('numColas').value);
+    const quantums = parseInt(document.getElementById('quantums').value);
+    const processCounts = [];
+    const queueNames = [];
+
+    for (let i = 0; i < numColas; i++) {
+        processCounts.push(parseInt(document.getElementById(`cola${i + 1}`).value));
+        queueNames.push(document.getElementById(`queueName${i + 1}`).value.trim());
+    }
+
+    if (numColas > 0 && quantums > 0 && !processCounts.some(isNaN) && queueNames.every(name => name !== '')) {
+        initQueues(numColas, processCounts, quantums, queueNames);
+        renderQueues();
+        return true;  // Devuelve true indicando que todo está correctamente configurado
+    } else {
+        alert("Por favor, asegúrese de llenar todos los campos correctamente.");
+        return false;  // Devuelve false si la configuración no es válida
+    }
 }
+
+
+
+function initQueues(numColas, processCounts, quantums, queueNames) {
+    queues = []; // Limpiar las colas existentes
+    for (let i = 0; i < numColas; i++) {
+        let queue = [];
+        for (let j = 0; j < processCounts[i]; j++) {
+            queue.push({
+                id: `${queueNames[i]}${j + 1}`,
+                lives: 3,
+                quantum: quantums
+            });
+        }
+        queues.push(queue);
+    }
+    currentIndex = 0;  // Resetear el índice para la ejecución del planificador
+}
+
+
+
 
 function adjustQuantum(queueIndex, processIndex) {
     let newQuantum = parseInt(prompt("Ingrese el nuevo quantum para el proceso:"), 10);
@@ -36,26 +102,28 @@ function adjustQuantum(queueIndex, processIndex) {
     }
 }
 
-let isPaused = false;  // Estado inicial no pausado
-
-function togglePause() {
-    isPaused = !isPaused;  // Cambia el estado de pausa
-    document.getElementById('pauseButton').textContent = isPaused ? "Continuar" : "Pausar";  // Actualiza el texto del botón
-    if (!isPaused) {
-        runScheduler();  // Si se está continuando, reinicia el planificador
+//  iniciar el planificador en el modo manual
+function startManualScheduler() {
+    // Verificar que todas las configuraciones necesarias están completas
+    if (!manualSetup()) { 
+        alert("Por favor, complete la configuración antes de iniciar el planificador.");
+        return;
     }
+
+    document.getElementById('pauseButton').textContent = "Planificador en ejecución";
+
+    // Iniciar el planificador
+    runScheduler();
 }
+
 
 let currentIndex = 0;  // Índice para rastrear la cola actual en la ejecución secuencial
 
 function runScheduler() {
-    if (isPaused) return;  // No hacer nada si el planificador está pausado
-
     if (currentIndex < queues.length && queues[currentIndex].length > 0) {
         let process = queues[currentIndex].shift();
         document.getElementById('currentProcess').textContent = `Ejecutando ${process.id} de la Cola ${currentIndex + 1}`;
         setTimeout(() => {
-            if (isPaused) return;  // Verificar de nuevo si está pausado antes de continuar
             processCloning(process, currentIndex);
             currentIndex = (currentIndex + 1) % queues.length;
             runScheduler();
@@ -72,25 +140,44 @@ function runScheduler() {
 
 
 
+
 function processCloning(process, index) {
     let message = "";
     if (process.lives > 1) {
-        process.lives--;
-        queues[index].push(process); // Reencola el proceso nativo
+        process.lives--;  // Reduce las vidas del proceso
+        queues[index].push(process);  // Reencola el proceso nativo al final de su cola
         message += `Proceso ${process.id} reencolado en cola ${index + 1}. `;
 
+        // Manejo de clonación en la cola inferior
         if (index + 1 < queues.length) {
-            let clone = {...process, id: `${process.id}c`}; // Crea un clon
-            queues[index + 1].push(clone); // Encola el clon en la cola siguiente
-            message += `Clon ${clone.id} insertado en cola ${index + 2}.`;
+            handleCloning(process, index);
         }
     } else {
-        message += `Proceso ${process.id} ha finalizado y no será reencolado.`;
+        // Eliminar el proceso nativo y todos los clones cuando las vidas llegan a 0
+        message += `Proceso ${process.id} ha finalizado y junto con todos sus clones serán eliminados. `;
+        removeAllInstances(process.id);
     }
     
     document.getElementById('currentProcess').textContent = message;
-    setTimeout(renderQueues, 10000); // Actualizar visualización de las colas
+    setTimeout(renderQueues, 500);  // Actualiza la visualización de las colas
 }
+
+function handleCloning(process, index) {
+    let cloneId = `${process.id}c`;
+    let cloneIndex = queues[index + 1].findIndex(p => p.id === cloneId);
+
+    if (cloneIndex > -1) {
+        queues[index + 1][cloneIndex] = {...process, id: cloneId};  // Reemplaza el clon existente
+    } else {
+        queues[index + 1].push({...process, id: cloneId});  // Encola un nuevo clon si no existe
+    }
+}
+
+function removeAllInstances(processId) {
+    // Elimina el proceso nativo y todos los clones de todas las colas
+    queues = queues.map(queue => queue.filter(p => !p.id.startsWith(processId)));
+}
+
 
 
 function renderQueues() {
