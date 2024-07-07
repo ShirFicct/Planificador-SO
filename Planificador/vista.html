@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Planificador por Envejecimiento</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Simulador de Planificador por Envejecimiento</h1>
+    <div id="controls">
+        <input type="text" id="queueNames" placeholder="Nombres de colas separados por comas" style="width: 300px;">
+        <button onclick="startScheduler(1)">Iniciar Modo Automático</button>
+        <button onclick="startScheduler(2)">Configurar Modo Manual</button>
+    </div>
+    <div id="prunDisplay">
+        <h2>Estado Actual del PRUN</h2>
+        <p id="currentProcess">Ningún proceso en ejecución</p>
+    </div>
+    <div id="statusMessages" style="padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc; margin-top: 10px;"></div>
+    
+    
+    <div id="queues">
+        <!-- Las colas se generarán dinámicamente aquí -->
+    </div>
+
+    <button id="pauseButton" onclick="togglePause()">Pausar</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
