@@ -1,7 +1,7 @@
 /* Estilo básico para el texto y el fondo de la página */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+        background: linear-gradient(to right, #dae2f8, #d6a4a4);
     margin: 0;
     padding: 20px;
 }

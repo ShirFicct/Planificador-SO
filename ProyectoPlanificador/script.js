@@ -117,7 +117,7 @@ function startManualScheduler() {
 }
 
 
-let currentIndex = 0;  // Índice para rastrear la cola actual en la ejecución secuencial
+let currentIndex = 0;  // Índice para rastrear la cola actual 
 
 function runScheduler() {
     if (currentIndex < queues.length && queues[currentIndex].length > 0) {
