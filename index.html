@@ -9,44 +9,30 @@
 <body>
     <h1>Simulador de Planificador por Envejecimiento</h1>
     <div id="controls">
-        
         <button onclick="startScheduler(1)">Iniciar Modo Automático</button>
         <button id="pauseButton" onclick="startManualScheduler()">Iniciar Modo Manual</button>
-       
     </div>
     <div id="prunDisplay">
         <h2>Estado Actual del PRUN</h2>
         <p id="currentProcess">Ningún proceso en ejecución</p>
     </div>
     <div id="statusMessages" style="padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc; margin-top: 10px;"></div>
-    
-    
     <div id="queues">
         <!-- Las colas se generarán dinámicamente aquí -->
     </div>
-
     <div id="manualSetup">
-    <h3>Configuración Manual del Planificador</h3>
-    <form id="setupForm">
-        <label for="numColas">Número de Colas:</label>
-        <input type="number" id="numColas" name="numColas" min="1" max="8" required>
-        <button type="button" onclick="generateProcessInputs()">Generar Campos de Procesos y Nombres</button><br>
-
-        <div id="queueNameInputs"></div> <!-- Contenedor para los nombres de las colas -->
-        <div id="processInputs"></div> <!-- Contenedor para los inputs de los procesos -->
-
-        <label for="quantums">Quantums Iniciales:</label>
-        <input type="number" id="quantums" name="quantums" min="1" required><br>
-
-        <button type="button" onclick="manualSetup()">Configurar Planificador</button>
-    </form>
-</div>
-
-    
-    
-
-
-
+        <h3>Configuración Manual del Planificador</h3>
+        <form id="setupForm">
+            <label for="numColas">Número de Colas:</label>
+            <input type="number" id="numColas" name="numColas" min="1" max="8" required>
+            <button type="button" onclick="generateProcessInputs()">Generar Campos de Procesos y Nombres</button><br>
+            <div id="queueNameInputs"></div> <!-- Contenedor para los nombres de las colas -->
+            <div id="processInputs"></div> <!-- Contenedor para los inputs de los procesos -->
+            <div id="quantumInputs"></div> <!-- Contenedor para los quantum por cola -->
+            <div id="processQuantumContainer"></div> <!-- Contenedor para los quantum de tiempo por proceso -->
+            <button type="button" onclick="manualSetup()">Configurar Planificador</button>
+        </form>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
