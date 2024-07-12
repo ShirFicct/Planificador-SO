@@ -248,6 +248,7 @@ function removeAllInstances(processId) {
 }
 
 
+
 function renderQueues() {
   const queuesContainer = document.getElementById("queues");
   queuesContainer.innerHTML = "";
